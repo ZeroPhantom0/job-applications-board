@@ -58,7 +58,8 @@ class Application extends BaseController
             'email' => $this->request->getPost('email'),
             'position' => $this->request->getPost('position'),
             'message' => $this->request->getPost('message'),
-            'resume_file' => $newFileName
+            'resume_file' => $newFileName,
+            'status' => 'pending' // Initialize standard application state flags
         ];
         
         if ($model->insert($data)) {

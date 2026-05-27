@@ -31,17 +31,12 @@
         
         .search-form .input-wrapper { flex: 2; min-width: 280px; position: relative; display: flex; align-items: center; }
         .search-form .input-wrapper .search-icon { position: absolute; left: 14px; color: #94a3b8; pointer-events: none; }
-        .search-form .input-wrapper .clear-icon { position: absolute; right: 14px; color: #94a3b8; cursor: pointer; display: none; z-index: 10; padding: 4px; }
-        .search-form .input-wrapper .clear-icon:hover { color: #ef4444; }
 
         .search-form input, .search-form select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; color: #334155; outline: none; transition: 0.15s; background-color: #fff; }
-        .search-form input { width: 100%; padding-left: 42px; padding-right: 40px; }
+        .search-form input { width: 100%; padding-left: 42px; }
         .search-form input:focus, .search-form select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
         
         .search-form select { flex: 1; min-width: 200px; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
-        
-        .reset-btn { padding: 12px 20px; background: #64748b; color: white; border: none; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 14px; transition: 0.15s; }
-        .reset-btn:hover { background: #475569; }
         
         /* Table Styles */
         .table-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
@@ -79,9 +74,14 @@
         .delete-btn:hover { background: #fee2e2; }
         
         .message-preview { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #64748b; }
-        .pagination { margin-top: 32px; display: flex; justify-content: center; gap: 6px; }
-        .pagination a, .pagination span { padding: 8px 14px; background: white; border-radius: 6px; text-decoration: none; color: #475569; border: 1px solid #e2e8f0; font-size: 14px; }
-        .pagination .active { background: #2563eb; color: white; border-color: #2563eb; }
+        
+        /* CodeIgniter Pagination Explicit Style Reset Patch */
+        .pagination { margin-top: 32px; display: flex; justify-content: center; }
+        .pagination ul { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0; align-items: center; }
+        .pagination li { display: inline-block; padding: 0; margin: 0; border: none; }
+        .pagination a, .pagination span { display: inline-block; padding: 8px 14px; background: white; border-radius: 6px; text-decoration: none; color: #475569; border: 1px solid #e2e8f0; font-size: 14px; transition: all 0.15s ease; }
+        .pagination li.active span, .pagination .active { background: #2563eb; color: white; border-color: #2563eb; font-weight: 600; }
+        .pagination a:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
         
         /* Custom Modal Layout */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
@@ -116,6 +116,17 @@
     </div>
     
     <div class="container">
+        <?php if (session()->getFlashdata('success')): ?>
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 500;">
+                <i class="bi bi-check-circle-fill" style="margin-right: 8px;"></i> <?= session()->getFlashdata('success') ?>
+            </div>
+        <?php endif; ?>
+        <?php if (session()->getFlashdata('error')): ?>
+            <div style="background: #fff5f5; border: 1px solid #fecdd3; color: #e11d48; padding: 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 500;">
+                <i class="bi bi-x-circle-fill" style="margin-right: 8px;"></i> <?= session()->getFlashdata('error') ?>
+            </div>
+        <?php endif; ?>
+
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-info">
@@ -127,7 +138,7 @@
             <div class="stat-card secondary">
                 <div class="stat-info">
                     <h3 id="live-count"><?= count($applications) ?></h3>
-                    <p>Visible Results</p>
+                    <p>Visible on This Page</p>
                 </div>
                 <div class="stat-icon"><i class="bi bi-file-earmark-person"></i></div>
             </div>
@@ -137,22 +148,17 @@
             <div class="search-form">
                 <div class="input-wrapper">
                     <i class="bi bi-search search-icon"></i>
-                    <input type="text" id="liveSearchInput" placeholder="Live search by name or email..." value="<?= esc($search ?? '') ?>" autocomplete="off">
-                    <i class="bi bi-x-circle-fill clear-icon" id="clearSearchBtn"></i>
+                    <input type="text" id="liveSearchInput" value="<?= esc($search) ?>" placeholder="Live search by name, email, or details..." autocomplete="off">
                 </div>
 
                 <select id="positionFilter">
-                    <option value="">All Job Positions</option>
-                    <option value="Web Developer" <?= isset($_GET['position']) && $_GET['position'] === 'Web Developer' ? 'selected' : '' ?>>Web Developer</option>
-                    <option value="UI/UX Designer" <?= isset($_GET['position']) && $_GET['position'] === 'UI/UX Designer' ? 'selected' : '' ?>>UI/UX Designer</option>
-                    <option value="Laravel Developer" <?= isset($_GET['position']) && $_GET['position'] === 'Laravel Developer' ? 'selected' : '' ?>>Laravel Developer</option>
-                    <option value="Frontend Developer" <?= isset($_GET['position']) && $_GET['position'] === 'Frontend Developer' ? 'selected' : '' ?>>Frontend Developer</option>
-                    <option value="Project Manager" <?= isset($_GET['position']) && $_GET['position'] === 'Project Manager' ? 'selected' : '' ?>>Project Manager</option>
+                    <option value="" <?= empty($position) ? 'selected' : '' ?>>All Job Positions</option>
+                    <option value="Web Developer" <?= $position === 'Web Developer' ? 'selected' : '' ?>>Web Developer</option>
+                    <option value="UI/UX Designer" <?= $position === 'UI/UX Designer' ? 'selected' : '' ?>>UI/UX Designer</option>
+                    <option value="Laravel Developer" <?= $position === 'Laravel Developer' ? 'selected' : '' ?>>Laravel Developer</option>
+                    <option value="Frontend Developer" <?= $position === 'Frontend Developer' ? 'selected' : '' ?>>Frontend Developer</option>
+                    <option value="Project Manager" <?= $position === 'Project Manager' ? 'selected' : '' ?>>Project Manager</option>
                 </select>
-
-                <?php if(!empty($search) || !empty($_GET['position'])): ?>
-                    <a href="/admin/applications" class="reset-btn"><i class="bi bi-arrow-counterclockwise"></i> Reset</a>
-                <?php endif; ?>
             </div>
         </div>
         
@@ -174,7 +180,7 @@
                         <tr class="no-data-row">
                             <td colspan="7" style="text-align: center; padding: 60px 20px; color: #94a3b8;">
                                 <i class="bi bi-folder-x" style="font-size: 40px; display:block; margin-bottom:10px;"></i>
-                                No applications found.
+                                No applications match the selected criteria on this page.
                             </td>
                         </tr>
                     <?php else: ?>
@@ -221,7 +227,7 @@
                         </tr>
                         <?php endforeach; ?>
                         <tr id="emptySearchRow" style="display: none;">
-                            <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">No matches found matching your filters on this page.</td>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">No matches found matching your filters on this page. Try shifting pages.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -229,7 +235,13 @@
         </div>
         
         <div class="pagination" id="paginator">
-            <?= $pager->links() ?>
+            <?php 
+                if (isset($pager)) {
+                    $pager->setPath('/admin/applications');
+                    // Appends server-side search strings straight to pagination navigation links
+                    echo $pager->links('default', 'default_full'); 
+                }
+            ?>
         </div>
     </div>
 
@@ -269,14 +281,12 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const input = document.getElementById('liveSearchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
             const positionFilter = document.getElementById('positionFilter');
             const rows = document.querySelectorAll('.app-row');
             const liveCount = document.getElementById('live-count');
             const emptyRow = document.getElementById('emptySearchRow');
-            const paginator = document.getElementById('paginator');
 
-            // Modal Dom Targets
+            // Modal Elements
             const modalOverlay = document.getElementById('appModalOverlay');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const modalName = document.getElementById('modalName');
@@ -285,22 +295,21 @@
             const modalDate = document.getElementById('modalDate');
             const modalMessage = document.getElementById('modalMessage');
 
-            // JavaScript Multi-Filtering Business Logic
+            let searchTimeout = null;
+
+            // Fluid Live Counter checking row visibilities
             const filterTable = () => {
                 const textVal = input.value.toLowerCase().trim();
                 const selectedPosition = positionFilter.value.toLowerCase().trim();
                 let visibleCount = 0;
 
-                // Sync custom clear input absolute item
-                clearBtn.style.display = textVal.length > 0 ? 'block' : 'none';
-
                 rows.forEach(row => {
                     const nameText = row.getAttribute('data-name').toLowerCase();
                     const emailText = row.getAttribute('data-email').toLowerCase();
+                    const msgText = row.getAttribute('data-message').toLowerCase();
                     const rowPosition = row.getAttribute('data-position').toLowerCase().trim();
                     
-                    // Match query text against Name or Email addresses specifically
-                    const matchesText = nameText.includes(textVal) || emailText.includes(textVal);
+                    const matchesText = nameText.includes(textVal) || emailText.includes(textVal) || msgText.includes(textVal);
                     const matchesPosition = selectedPosition === "" || rowPosition === selectedPosition;
 
                     if (matchesText && matchesPosition) {
@@ -311,26 +320,63 @@
                     }
                 });
 
-                // Render dynamic item counter states
-                liveCount.textContent = visibleCount;
+                if(liveCount) liveCount.textContent = visibleCount;
                 if(emptyRow) emptyRow.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
-                
-                // Hide dynamic layout indicators if filtering is currently applied
-                const isFiltering = textVal.length > 0 || selectedPosition !== "";
-                if(paginator) paginator.style.display = isFiltering ? 'none' : 'flex';
             };
 
-            // Event Binding Matrix
-            input.addEventListener('input', filterTable);
-            positionFilter.addEventListener('change', filterTable);
-            
-            clearBtn.addEventListener('click', () => {
-                input.value = '';
+            // Updates the browser window URL context natively as you type or pick elements
+            const updateURLParams = () => {
+                const url = new URL(window.location.href);
+                
+                if (input.value.trim() !== '') {
+                    url.searchParams.set('search', input.value.trim());
+                } else {
+                    url.searchParams.delete('search');
+                }
+
+                if (positionFilter.value !== '') {
+                    url.searchParams.set('position', positionFilter.value);
+                } else {
+                    url.searchParams.delete('position');
+                }
+                
+                // Keep page index context clear when swapping baseline parameters
+                url.searchParams.delete('page'); 
+                
+                history.replaceState(null, '', url.toString());
+            };
+
+            // Asynchronous key inputs trigger instantaneous filter visuals, then updates database endpoints
+            input.addEventListener('input', () => {
                 filterTable();
-                input.focus();
+                
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    // Triggers server query smoothly without interrupting keystroke streams
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('search', input.value.trim());
+                    if(positionFilter.value) url.searchParams.set('position', positionFilter.value);
+                    url.searchParams.delete('page');
+                    window.location.href = url.toString();
+                }, 750); // 750ms latency buffer allows natural text typing 
             });
 
-            // Row click interactions to bind parameters and display view modal wrapper
+            // Dropdown changes fire structural redirects immediately to refresh the model scopes
+            positionFilter.addEventListener('change', () => {
+                filterTable();
+                updateURLParams();
+                const url = new URL(window.location.href);
+                if (positionFilter.value !== '') {
+                    url.searchParams.set('position', positionFilter.value);
+                } else {
+                    url.searchParams.delete('position');
+                }
+                if (input.value.trim() !== '') url.searchParams.set('search', input.value.trim());
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            });
+
+            // Open Detail Modal Window Row Binder
             rows.forEach(row => {
                 row.addEventListener('click', () => {
                     modalName.textContent = row.getAttribute('data-name');
@@ -343,18 +389,14 @@
                 });
             });
 
-            // Close actions configuration block
+            // Dismiss Modals
             const closeModal = () => modalOverlay.classList.remove('active');
             closeModalBtn.addEventListener('click', closeModal);
-            modalOverlay.addEventListener('click', (e) => {
-                if(e.target === modalOverlay) closeModal();
-            });
-            document.addEventListener('keydown', (e) => {
-                if(e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
-            });
+            modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
+            document.addEventListener('keydown', (e) => { if(e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
 
-            // Initialize baseline evaluation check sequence
-            if(input.value || positionFilter.value) filterTable();
+            // Run alignment layouts immediately on load setup
+            filterTable();
         });
     </script>
 </body>
