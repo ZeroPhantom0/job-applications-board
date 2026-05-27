@@ -155,6 +155,7 @@
                     <option value="" <?= empty($position) ? 'selected' : '' ?>>All Job Positions</option>
                     <option value="Web Developer" <?= $position === 'Web Developer' ? 'selected' : '' ?>>Web Developer</option>
                     <option value="UI/UX Designer" <?= $position === 'UI/UX Designer' ? 'selected' : '' ?>>UI/UX Designer</option>
+                    <option value="Codeigniter4 Developer" <?= $position === 'Codeigniter4 Developer' ? 'selected' : '' ?>>Codeigniter4 Developer</option>
                     <option value="Laravel Developer" <?= $position === 'Laravel Developer' ? 'selected' : '' ?>>Laravel Developer</option>
                     <option value="Frontend Developer" <?= $position === 'Frontend Developer' ? 'selected' : '' ?>>Frontend Developer</option>
                     <option value="Project Manager" <?= $position === 'Project Manager' ? 'selected' : '' ?>>Project Manager</option>
