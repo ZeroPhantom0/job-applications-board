@@ -431,7 +431,6 @@ database.default.DBDriver = MySQLi
 | ---------- | ------------------------ |
 | Course     | Advanced Web Development |
 | Framework  | CodeIgniter 4            |
-| Term       | Spring 2025              |
 | Instructor | Edward Grageda           |
 | Project    | Final Project            |
 
@@ -448,7 +447,7 @@ This project was created for educational purposes as part of the Advanced Web De
 | Resource           | URL                                                      |
 | ------------------ | -------------------------------------------------------- |
 | Live Demo          | `https://job-application.infinityfreeapp.com`            |
-| GitHub Repository  | `https://github.com/yourusername/job-applications-board` |
+| GitHub Repository  | `https://github.com/ZeroPhantom0/job-applications-board` |
 | Brevo SMTP         | `https://www.brevo.com`                                  |
 | InfinityFree       | `https://www.infinityfree.net`                           |
 | CodeIgniter 4 Docs | `https://codeigniter4.github.io/CodeIgniter4`            |
