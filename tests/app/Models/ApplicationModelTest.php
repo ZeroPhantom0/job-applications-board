@@ -74,8 +74,8 @@ class ApplicationModelTest extends CIUnitTestCase
     public function testValidationFailsWithShortName()
     {
         $data = [
-            'name' => 'J',
-            'email' => 'john@example.com',
+            'name' => 'Z',
+            'email' => 'zen@example.com',
             'position' => 'Web Developer',
             'resume_file' => 'resume.pdf'
         ];

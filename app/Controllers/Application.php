@@ -34,7 +34,7 @@ class Application extends BaseController
         $fileSize = $file->getSize();
         $fileExt = $file->getExtension();
         $allowedExts = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
+        $maxSize = 5 * 1024 * 1024;
         
         if (!in_array(strtolower($fileExt), $allowedExts)) {
             return redirect()->back()->withInput()->with('error', 'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed.');
